@@ -21,6 +21,7 @@ RUN dnf install -y \
         jq \
         yq \
         openssh-server \
+        firewalld \
     && dnf clean all
 
 # Setup SSH
