@@ -18,16 +18,16 @@ jobs:
             packages: write
 
         steps:
-            - name: Free disk space
-              uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
-              with:
-                  tool-cache: true
-                  android: true
-                  dotnet: true
-                  haskell: true
-                  large-packages: true
-                  docker-images: true
-                  swap-storage: false
+            # - name: Free disk space
+            #   uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
+            #   with:
+            #       tool-cache: true
+            #       android: true
+            #       dotnet: true
+            #       haskell: true
+            #       large-packages: true
+            #       docker-images: true
+            #       swap-storage: false
 
             - name: Checkout
               uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
