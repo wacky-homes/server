@@ -1,0 +1,68 @@
+name: Build server image
+
+on:
+    schedule:
+        - cron: "0 13 * * *"
+    workflow_dispatch:
+
+env:
+    REGISTRY: ghcr.io
+    IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        permissions:
+            contents: read
+            packages: write
+
+        steps:
+            - name: Free disk space
+              uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
+              with:
+                  tool-cache: true
+                  android: true
+                  dotnet: true
+                  haskell: true
+                  large-packages: true
+                  docker-images: true
+                  swap-storage: false
+
+            - name: Checkout
+              uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+            - name: Log in to GHCR
+              uses: redhat-actions/podman-login@4934294ad0449894bcd1e9f191899d7292469603 # v1.7
+              with:
+                  registry: ${{ env.REGISTRY }}
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Generate image metadata
+              id: meta
+              uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
+              with:
+                  images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+                  tags: |
+                      type=raw,value=latest
+                      type=sha,format=long
+                      type=schedule,pattern={{date 'YYYYMMDD'}}
+
+            - name: Build image
+              id: build
+              uses: redhat-actions/buildah-build@7a95fa7ee0f02d552a32753e7414641a04307056 # v2.13
+              with:
+                  containerfiles: ./Containerfile
+                  image: ${{ env.IMAGE_NAME }}
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
+                  oci: true
+
+            - name: Push to GHCR
+              id: push
+              uses: redhat-actions/push-to-registry@5ed88d269cf581ea9ef6dd6806d01562096bee9c # v2.8
+              with:
+                  image: ${{ steps.build.outputs.image }}
+                  tags: ${{ steps.build.outputs.tags }}
+                  registry: ${{ env.REGISTRY }}
