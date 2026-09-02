@@ -5,15 +5,7 @@ metadata:
     namespace: flux-system
 type: Opaque
 stringData:
-    wacky.asc: |
-        -----BEGIN PGP PUBLIC KEY BLOCK-----
-        mDMEapgrChYJKwYBBAHaRw8BAQdAqGmkLyuty9g/q89otIZ4EjHXKg2d01Xn5h3b
-        +VB3Ke60BXdhY2t5iJMEExYKADsWIQTOCSuUj9Xe4p1xJFBhfNGfa5xdLwUCapgr
-        CgIbAwULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgAAKCRBhfNGfa5xdLxX9AP4k
-        sB/WNixoPAS0dsqQpqrk2IQigtJMhB+jVzqx4OICHgEAmmgij9ZDovS+Jm4bz/5W
-        hJYWtcVnD++fUZv1tSy0qws=
-        =z6RS
-        -----END PGP PUBLIC KEY BLOCK-----
+    wacky.asc: LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptRE1FYXBnckNoWUpLd1lCQkFIYVJ3OEJBUWRBcUdta0x5dXR5OWcvcTg5b3RJWjRFakhYS2cyZDAxWG41aDNiCitWQjNLZTYwQlhkaFkydDVpSk1FRXhZS0FEc1dJUVRPQ1N1VWo5WGU0cDF4SkZCaGZOR2ZhNXhkTHdVQ2FwZ3IKQ2dJYkF3VUxDUWdIQWdJaUFnWVZDZ2tJQ3dJRUZnSURBUUllQndJWGdBQUtDUkJoZk5HZmE1eGRMeFg5QVA0awpzQi9XTml4b1BBUzBkc3FRcHFyazJJUWlndEpNaEIralZ6cXg0T0lDSGdFQW1tZ2lqOVpEb3ZTK0ptNGJ6LzVXCmhKWVd0Y1ZuRCsrZlVadjF0U3kwcXdzPQo9ejZSUwotLS0tLUVORCBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCg==
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
