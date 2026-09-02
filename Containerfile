@@ -33,6 +33,7 @@ RUN dnf install -y \
         nfs-utils \
         socat \
         util-linux \
+        https://rpm.rancher.io/k3s/stable/common/centos/8/noarch/k3s-selinux-1.6-1.el8.noarch.rpm \
     && dnf clean all && rm -rf /var/cache /var/log/dnf
 
 # Install k3s
