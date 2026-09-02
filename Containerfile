@@ -24,6 +24,7 @@ RUN dnf install -y \
         firewalld \
         ca-certificates \
         conntrack-tools \
+        container-selinux \
         e2fsprogs \
         ethtool \
         iproute \
