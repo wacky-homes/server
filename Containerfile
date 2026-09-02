@@ -62,7 +62,8 @@ RUN printf '%s\n' \
 RUN firewall-offline-cmd --add-service=ssh
 
 # Enable systemd services
-RUN systemctl enable sshd.service && \
+RUN systemctl enable k3s.service && \
+    systemctl enable sshd.service && \
     systemctl enable firewalld.service
 
 # Validate the container
