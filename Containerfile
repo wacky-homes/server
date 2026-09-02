@@ -2,6 +2,7 @@ FROM quay.io/fedora/fedora-bootc:44
 
 ARG HOSTNAME=wacky
 ARG TIMEZONE=UTC
+ARG K3S_VERSION=v1.36.4+k3s1
 
 # Set hostname
 RUN echo "$HOSTNAME"            > /etc/hostname && \
@@ -20,11 +21,14 @@ RUN dnf install -y \
         htop \
         jq \
         yq \
+    && dnf clean all && rm -rf /var/cache /var/log/dnf
+
+# Install k3s
+RUN dnf install -y \
         openssh-server \
         firewalld \
         ca-certificates \
         conntrack-tools \
-        container-selinux \
         e2fsprogs \
         ethtool \
         iproute \
@@ -33,14 +37,18 @@ RUN dnf install -y \
         nfs-utils \
         socat \
         util-linux \
-        https://rpm.rancher.io/k3s/stable/common/centos/8/noarch/k3s-selinux-1.6-1.el8.noarch.rpm \
     && dnf clean all && rm -rf /var/cache /var/log/dnf
-
-# Install k3s
-RUN curl -sfL https://get.k3s.io | \
-    INSTALL_K3S_SKIP_ENABLE=true \
-    INSTALL_K3S_SKIP_START=true \
-    sh -
+RUN curl -fL "https://github.com/k3s-io/k3s/releases/download/v1.36.4%2Bk3s1/k3s-arm64" -o /usr/local/bin/k3s && \
+    chmod 0755 /usr/local/bin/k3s && \
+    ln -s /usr/local/bin/k3s /usr/local/bin/kubectl && \
+    ln -s /usr/local/bin/k3s /usr/local/bin/crictl && \
+    ln -s /usr/local/bin/k3s /usr/local/bin/ctr && \
+    mkdir -p \
+        /etc/rancher/k3s \
+        /var/lib/rancher/k3s \
+        /var/lib/kubelet \
+        /run/k3s
+COPY system/etc/systemd/system/k3s.service /etc/systemd/system/k3s.service
 COPY system/etc/rancher/k3s/config.yaml /etc/rancher/k3s/config.yaml
 
 # Setup SSH
