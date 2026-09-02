@@ -12,7 +12,7 @@ RUN echo "$HOSTNAME"            > /etc/hostname && \
 RUN ln -snf "/usr/share/zoneinfo/${TIMEZONE}" /etc/localtime && \
     echo "${TZ}" > /etc/timezone
 
-# Install other tools
+# Install packages
 RUN dnf install -y \
         git \
         wget \
@@ -22,7 +22,24 @@ RUN dnf install -y \
         yq \
         openssh-server \
         firewalld \
-    && dnf clean all
+        ca-certificates \
+        conntrack-tools \
+        e2fsprogs \
+        ethtool \
+        iproute \
+        iptables \
+        kmod \
+        nfs-utils \
+        socat \
+        util-linux \
+    && dnf clean all && rm -rf /var/cache /var/log/dnf
+
+# Install k3s
+RUN curl -sfL https://get.k3s.io | \
+    INSTALL_K3S_SKIP_ENABLE=true \
+    INSTALL_K3S_SKIP_START=true \
+    sh -
+COPY system/etc/rancher/k3s/config.yaml /etc/rancher/k3s/config.yaml
 
 # Setup SSH
 RUN printf '%s\n' \
@@ -40,3 +57,7 @@ RUN systemctl enable sshd.service && \
 
 # Validate the container
 RUN bootc container lint
+
+VOLUME /var/lib/rancher/k3s
+VOLUME /etc/rancher/k3s
+STOPSIGNAL SIGRTMIN+3

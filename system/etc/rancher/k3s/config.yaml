@@ -1,0 +1,6 @@
+# Encrypt Kubernetes Secret objects at rest.
+secrets-encryption: true
+
+# Make the kubeconfig readable by local users.
+# Restrict this to "0600" if only root should read it.
+write-kubeconfig-mode: "0644"
