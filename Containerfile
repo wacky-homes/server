@@ -5,9 +5,9 @@ ARG TIMEZONE=UTC
 ARG K3S_VERSION=v1.36.4+k3s1
 
 # Set hostname
-RUN echo "$HOSTNAME"            > /etc/hostname && \
-	echo "127.0.0.1	$HOSTNAME" >> /etc/hosts && \
-	echo "::1		$HOSTNAME" >> /etc/hosts
+RUN echo "${HOSTNAME}"            > /etc/hostname && \
+	echo "127.0.0.1	${HOSTNAME}" >> /etc/hosts && \
+	echo "::1		${HOSTNAME}" >> /etc/hosts
 
 # Set timezone
 RUN ln -snf "/usr/share/zoneinfo/${TIMEZONE}" /etc/localtime && \

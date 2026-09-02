@@ -28,9 +28,9 @@ podman run \
     localhost/wacky-homes-installer:latest
 
 echo ""
-if [ -e .output/bootiso/installer.iso ]; then
+if [ -e .output/bootiso/install.iso ]; then
     echo "ISO ready at .output/bootiso/installer.iso"
-    echo "Flash it to a USB drive with: sudo dd if=.output/bootiso/installer.iso of=/dev/sdX bs=8M status=progress"
+    echo "Flash it to a USB drive with: sudo dd if=.output/bootiso/install.iso of=/dev/sdX bs=8M status=progress"
 else
     echo "Failed to build installer"
 fi
