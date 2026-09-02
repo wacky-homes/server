@@ -2,7 +2,7 @@ FROM quay.io/fedora/fedora-bootc:44
 
 ARG HOSTNAME=wacky
 ARG TIMEZONE=UTC
-ARG K3S_VERSION=v1.36.4+k3s1
+ARG K3S_VERSION=1.36.4+k3s1
 
 # Set hostname
 RUN echo "${HOSTNAME}"            > /etc/hostname && \
@@ -11,7 +11,7 @@ RUN echo "${HOSTNAME}"            > /etc/hostname && \
 
 # Set timezone
 RUN ln -snf "/usr/share/zoneinfo/${TIMEZONE}" /etc/localtime && \
-    echo "${TZ}" > /etc/timezone
+    echo "${TIMEZONE}" > /etc/timezone
 
 # Install packages
 RUN dnf install -y \
@@ -23,7 +23,7 @@ RUN dnf install -y \
         yq \
     && dnf clean all && rm -rf /var/cache /var/log/dnf
 
-# Install k3s
+# Install k3s dependencies
 RUN dnf install -y \
         openssh-server \
         firewalld \
@@ -38,16 +38,17 @@ RUN dnf install -y \
         socat \
         util-linux \
     && dnf clean all && rm -rf /var/cache /var/log/dnf
-RUN curl -fL "https://github.com/k3s-io/k3s/releases/download/v1.36.4%2Bk3s1/k3s-arm64" -o /usr/local/bin/k3s && \
-    chmod 0755 /usr/local/bin/k3s && \
-    ln -s /usr/local/bin/k3s /usr/local/bin/kubectl && \
-    ln -s /usr/local/bin/k3s /usr/local/bin/crictl && \
-    ln -s /usr/local/bin/k3s /usr/local/bin/ctr && \
-    mkdir -p \
-        /etc/rancher/k3s \
-        /var/lib/rancher/k3s \
-        /var/lib/kubelet \
-        /run/k3s
+
+# Install k3s
+RUN curl -fL "https://github.com/k3s-io/k3s/releases/download/v${K3S_VERSION}/k3s" -o /usr/bin/k3s && \
+    chmod 0755 /usr/bin/k3s && \
+    ln -s /usr/bin/k3s /usr/bin/kubectl && \
+    ln -s /usr/bin/k3s /usr/bin/crictl && \
+    ln -s /usr/bin/k3s /usr/bin/ctr
+
+# Copy k3s configurations
+COPY system/usr/share/k3s/manifests/flux.yaml /usr/share/k3s/manifests/flux.yaml
+COPY system/usr/share/k3s/manifests/flux-sync.yaml /usr/share/k3s/manifests/flux-sync.yaml
 COPY system/etc/systemd/system/k3s.service /etc/systemd/system/k3s.service
 COPY system/etc/rancher/k3s/config.yaml /etc/rancher/k3s/config.yaml
 
@@ -58,8 +59,11 @@ RUN printf '%s\n' \
         'KbdInteractiveAuthentication no' \
     >> /etc/ssh/sshd_config
 
-# Setup firewall
-RUN firewall-offline-cmd --add-service=ssh
+# Setup firewall for ssh, http and k3s cluster and service CIDRs
+RUN firewall-offline-cmd --add-service=ssh && \
+    firewall-offline-cmd --add-service=http && \
+    firewall-offline-cmd --zone=trusted --add-source=10.42.0.0/16 && \
+    firewall-offline-cmd --zone=trusted --add-source=10.43.0.0/16
 
 # Enable systemd services
 RUN systemctl enable k3s.service && \
@@ -69,6 +73,4 @@ RUN systemctl enable k3s.service && \
 # Validate the container
 RUN bootc container lint
 
-VOLUME /var/lib/rancher/k3s
-VOLUME /etc/rancher/k3s
 STOPSIGNAL SIGRTMIN+3

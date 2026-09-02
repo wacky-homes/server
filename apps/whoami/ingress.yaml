@@ -3,7 +3,7 @@ kind: Ingress
 
 metadata:
     name: whoami
-    namespace: whoami
+    namespace: default
     annotations:
         traefik.ingress.kubernetes.io/router.entrypoints: web
 

@@ -1,11 +1,13 @@
 [Unit]
 Description=K3s Kubernetes
 Wants=network-online.target
-After=network-online.target
+After=network-online.target firewalld.service
 
 [Service]
 Type=notify
-ExecStart=/usr/local/bin/k3s server --config /etc/rancher/k3s/config.yaml
+ExecStartPre=/usr/bin/mkdir -p /var/lib/rancher/k3s/server/manifests
+ExecStartPre=/usr/bin/cp -a /usr/share/k3s/manifests/. /var/lib/rancher/k3s/server/manifests/
+ExecStart=/usr/bin/k3s server --config /etc/rancher/k3s/config.yaml
 KillMode=process
 Delegate=yes
 Restart=always
