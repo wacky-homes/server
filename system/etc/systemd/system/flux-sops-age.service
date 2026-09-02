@@ -1,0 +1,18 @@
+[Unit]
+Description=Create SOPS age key secret for Flux
+ConditionPathExists=/etc/flux/age.agekey
+Requires=k3s.service
+After=k3s.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+Restart=on-failure
+RestartSec=10
+Environment=KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+ExecStart=/bin/sh -c 'kubectl create secret generic sops-age -n flux-system \
+    --from-file=age.agekey=/etc/flux/age.agekey \
+    --dry-run=client -o yaml | kubectl apply -f -'
+
+[Install]
+WantedBy=multi-user.target

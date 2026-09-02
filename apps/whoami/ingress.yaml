@@ -20,3 +20,13 @@ spec:
                             name: whoami
                             port:
                                 name: http
+        - host: whoami.wacky.local
+          http:
+              paths:
+                  - path: /
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: whoami
+                            port:
+                                name: http

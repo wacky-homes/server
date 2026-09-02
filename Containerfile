@@ -49,6 +49,7 @@ RUN curl -fL "https://github.com/k3s-io/k3s/releases/download/v${K3S_VERSION}/k3
 # Copy k3s configurations
 COPY system/usr/share/k3s/manifests/flux.yaml /usr/share/k3s/manifests/flux.yaml
 COPY system/usr/share/k3s/manifests/flux-sync.yaml /usr/share/k3s/manifests/flux-sync.yaml
+COPY system/etc/systemd/system/flux-sops-age.service /etc/systemd/system/flux-sops-age.service
 COPY system/etc/systemd/system/k3s.service /etc/systemd/system/k3s.service
 COPY system/etc/rancher/k3s/config.yaml /etc/rancher/k3s/config.yaml
 
@@ -66,7 +67,8 @@ RUN firewall-offline-cmd --add-service=ssh && \
     firewall-offline-cmd --zone=trusted --add-source=10.43.0.0/16
 
 # Enable systemd services
-RUN systemctl enable k3s.service && \
+RUN systemctl enable flux-sops-age.service && \
+    systemctl enable k3s.service && \
     systemctl enable sshd.service && \
     systemctl enable firewalld.service
 
