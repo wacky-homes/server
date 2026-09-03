@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+    name: actual
+    namespace: default
+
+spec:
+    selector:
+        app: actual
+    ports:
+        - name: http
+          port: 5006
+          targetPort: http
+    type: ClusterIP

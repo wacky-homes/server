@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+    name: actual
+    namespace: default
+    annotations:
+        traefik.ingress.kubernetes.io/router.entrypoints: web
+
+spec:
+    ingressClassName: traefik
+    rules:
+        - host: actual.wacky.homes
+          http:
+              paths:
+                  - path: /
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: actual
+                            port:
+                                name: http
+        - host: actual.wacky.local
+          http:
+              paths:
+                  - path: /
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: actual
+                            port:
+                                name: http
