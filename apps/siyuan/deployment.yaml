@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+    name: siyuan
+    namespace: default
+
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: siyuan
+    template:
+        metadata:
+            labels:
+                app: siyuan
+        spec:
+            enableServiceLinks: false
+            containers:
+                - name: siyuan
+                  image: b3log/siyuan
+                  args:
+                      - serve
+                      - --workspace=/data
+                  env:
+                      - name: SIYUAN_OIDC_ENABLED
+                        value: true
+                      - name: SIYUAN_OIDC_PROVIDER
+                        value: google
+                      - name: SIYUAN_OIDC_CLIENT_ID
+                        value: 602748453582-dvvs3s43dn8ni07rce3ovqhdquoigen0.apps.googleusercontent.com
+                      - name: PUID
+                        value: 1001
+                      - name: PGID
+                        value: 1002
+                  envFrom:
+                      - secretRef:
+                            name: siyuan
+                  ports:
+                      - name: http
+                        containerPort: 6806
+                  volumeMounts:
+                      - name: siyuan
+                        mountPath: /data
+            volumes:
+                - name: siyuan
+                  hostPath:
+                      path: /var/data/siyuan
+                      type: DirectoryOrCreate
