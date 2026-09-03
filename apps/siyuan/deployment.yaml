@@ -23,12 +23,16 @@ spec:
                       - serve
                       - --workspace=/data
                   env:
+                      - name: SIYUAN_ACCESS_AUTH_CODE_BYPASS
+                        value: "true"
                       - name: SIYUAN_OIDC_ENABLED
                         value: "true"
                       - name: SIYUAN_OIDC_PROVIDER
                         value: google
                       - name: SIYUAN_OIDC_CLIENT_ID
                         value: 602748453582-dvvs3s43dn8ni07rce3ovqhdquoigen0.apps.googleusercontent.com
+                      - name: SIYUAN_OIDC_REDIRECT_URL
+                        value: /api/system/oidc/callback
                       - name: PUID
                         value: "1001"
                       - name: PGID
