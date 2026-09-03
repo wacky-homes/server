@@ -15,9 +15,13 @@ spec:
             labels:
                 app: actual
         spec:
+            enableServiceLinks: false
             containers:
                 - name: actual
                   image: ghcr.io/actualbudget/actual:latest-alpine
+                  env:
+                      - name: ACTUAL_PORT
+                        value: "5006"
                   ports:
                       - name: http
                         containerPort: 5006
