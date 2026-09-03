@@ -23,6 +23,8 @@ spec:
                       - serve
                       - --workspace=/data
                   env:
+                      - name: SIYUAN_OIDC_ENABLED
+                        value: "false"
                       - name: PUID
                         value: "1001"
                       - name: PGID
