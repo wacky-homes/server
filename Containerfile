@@ -66,8 +66,12 @@ RUN firewall-offline-cmd --add-service=ssh && \
     firewall-offline-cmd --zone=trusted --add-source=10.42.0.0/16 && \
     firewall-offline-cmd --zone=trusted --add-source=10.43.0.0/16
 
-# Enable systemd services
-RUN systemctl enable flux-sops-age.service && \
+# Copy systemd units
+COPY system/etc/systemd/system/var-data.mount /etc/systemd/system/var-data.mount
+
+# Enable systemd units
+RUN systemctl enable var-data.mount && \
+    systemctl enable flux-sops-age.service && \
     systemctl enable k3s.service && \
     systemctl enable sshd.service && \
     systemctl enable firewalld.service

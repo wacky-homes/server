@@ -1,0 +1,11 @@
+[Unit]
+Description=Data volume
+
+[Mount]
+What=/dev/disk/by-uuid/2b641f3f-d0a5-4eca-ba2a-ea36f7e75286
+Where=/var/data
+Type=auto
+Options=defaults,nofail
+
+[Install]
+WantedBy=local-fs.target
