@@ -24,15 +24,15 @@ spec:
                       - --workspace=/data
                   env:
                       - name: SIYUAN_OIDC_ENABLED
-                        value: true
+                        value: "true"
                       - name: SIYUAN_OIDC_PROVIDER
                         value: google
                       - name: SIYUAN_OIDC_CLIENT_ID
                         value: 602748453582-dvvs3s43dn8ni07rce3ovqhdquoigen0.apps.googleusercontent.com
                       - name: PUID
-                        value: 1001
+                        value: "1001"
                       - name: PGID
-                        value: 1002
+                        value: "1002"
                   envFrom:
                       - secretRef:
                             name: siyuan
