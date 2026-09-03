@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+    name: immich
+    namespace: default
+
+spec:
+    replicas: 1
+    strategy:
+        type: Recreate
+    selector:
+        matchLabels:
+            app: immich
+    template:
+        metadata:
+            labels:
+                app: immich
+        spec:
+            containers:
+                - name: immich-db
+                  image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0
+                  env:
+                      - name: POSTGRES_DB
+                        value: immich
+                      - name: POSTGRES_USER
+                        value: postgres
+                  envFrom:
+                      - secretRef:
+                            name: immich
+                  volumeMounts:
+                      - name: immich-db
+                        mountPath: /var/lib/postgresql/data
+                  startupProbe:
+                      exec:
+                          command:
+                              ["pg_isready", "-U", "postgres", "-d", "immich"]
+                      periodSeconds: 2
+                      failureThreshold: 60
+
+                - name: immich-redis
+                  image: docker.io/valkey/valkey:8-bookworm
+                  startupProbe:
+                      exec:
+                          command: ["valkey-cli", "ping"]
+                      periodSeconds: 2
+                      failureThreshold: 30
+
+                - name: immich
+                  image: ghcr.io/immich-app/immich-server:release
+                  env:
+                      - name: UPLOAD_LOCATION
+                        value: /data/immich/library
+                      - name: DB_DATA_LOCATION
+                        value: /data/immich/db
+                      - name: DB_HOSTNAME
+                        value: localhost
+                      - name: DB_DATABASE_NAME
+                        value: immich
+                      - name: DB_USERNAME
+                        value: postgres
+                      - name: REDIS_HOSTNAME
+                        value: localhost
+                  envFrom:
+                      - secretRef:
+                            name: immich
+                  ports:
+                      - name: http
+                        containerPort: 2283
+                  volumeMounts:
+                      - name: immich-library
+                        mountPath: /data
+
+                - name: immich-machine-learning
+                  image: ghcr.io/immich-app/immich-machine-learning:release
+                  env:
+                      - name: UPLOAD_LOCATION
+                        value: /data/immich/library
+                      - name: DB_DATA_LOCATION
+                        value: /data/immich/db
+                  volumeMounts:
+                      - name: immich-machine-learning
+                        mountPath: /cache
+            volumes:
+                - name: immich-db
+                  hostPath:
+                      path: /var/data/immich/db
+                      type: DirectoryOrCreate
+                - name: immich-library
+                  hostPath:
+                      path: /var/data/immich/library
+                      type: DirectoryOrCreate
+                - name: immich-machine-learning
+                  hostPath:
+                      path: /var/data/immich/machine-learning
+                      type: DirectoryOrCreate
