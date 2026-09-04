@@ -9,5 +9,6 @@ resources:
 
 configMapGenerator:
     - name: home-assistant-config
+      namespace: default
       files:
           - configuration.yaml
