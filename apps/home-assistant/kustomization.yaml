@@ -5,3 +5,9 @@ resources:
     - deployment.yaml
     - ingress.yaml
     - service.yaml
+    - networkpolicy.yaml
+
+configMapGenerator:
+    - name: home-assistant-config
+      files:
+          - configuration.yaml

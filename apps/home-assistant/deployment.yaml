@@ -24,8 +24,15 @@ spec:
                   volumeMounts:
                       - name: home-assistant
                         mountPath: /config
+                      - name: home-assistant-config
+                        mountPath: /config/configuration.yaml
+                        subPath: configuration.yaml
+                        readOnly: true
             volumes:
                 - name: home-assistant
                   hostPath:
                       path: /var/data/home-assistant
                       type: DirectoryOrCreate
+                - name: home-assistant-config
+                  configMap:
+                      name: home-assistant-config
