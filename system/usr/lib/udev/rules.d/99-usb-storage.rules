@@ -1,0 +1,6 @@
+# Never power-manage the data disk's bridge.
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="174c", ATTR{idProduct}=="55aa", \
+    TEST=="power/control", ATTR{power/control}="on"
+
+# Survive long bridge stalls instead of erroring out mid-write.
+ACTION=="add", SUBSYSTEMS=="usb", SUBSYSTEM=="scsi", ATTR{timeout}="180"

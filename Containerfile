@@ -52,6 +52,9 @@ COPY system/etc/rancher/k3s/config.yaml /etc/rancher/k3s/config.yaml
 COPY system/usr/share/containers/skopeo.pub /usr/share/containers/skopeo.pub
 COPY system/etc/containers/policy.json /etc/containers/policy.json
 COPY system/etc/containers/registries.d/ghcr.io.yaml /etc/containers/registries.d/ghcr.io.yaml
+COPY system/usr/lib/bootc/kargs.d/usb-storage.toml /usr/lib/bootc/kargs.d/usb-storage.toml
+COPY system/usr/lib/udev/rules.d/99-usb-storage.rules /usr/lib/udev/rules.d/99-usb-storage.rules
+COPY system/usr/lib/systemd/system.conf.d/device-timeout.conf /usr/lib/systemd/system.conf.d/device-timeout.conf
 
 # Setup SSH
 RUN printf '%s\n' \

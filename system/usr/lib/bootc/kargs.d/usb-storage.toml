@@ -1,0 +1,5 @@
+kargs = [
+    "usbcore.autosuspend=-1",
+    "usbcore.old_scheme_first=1",
+    "usbcore.initial_descriptor_timeout=10000"
+]
