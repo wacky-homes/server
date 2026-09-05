@@ -1,3 +1,6 @@
+[customizations]
+hostname = "wacky"
+
 [[customizations.filesystem]]
 mountpoint = "/"
 minsize = "450 GiB"

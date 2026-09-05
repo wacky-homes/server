@@ -1,17 +1,11 @@
 FROM quay.io/fedora/fedora-bootc:44
 
-ARG NODE_NAME=wacky
-ARG NODE_TIMEZONE=UTC
+ARG TIMEZONE=UTC
 ARG K3S_VERSION=1.36.4+k3s1
 
-# Set hostname
-RUN echo "${NODE_NAME}"            > /etc/hostname && \
-	echo "127.0.0.1	${NODE_NAME}" >> /etc/hosts && \
-	echo "::1		${NODE_NAME}" >> /etc/hosts
-
 # Set timezone
-RUN ln -snf "/usr/share/zoneinfo/${NODE_TIMEZONE}" /etc/localtime && \
-    echo "${NODE_TIMEZONE}" > /etc/timezone
+RUN ln -snf "/usr/share/zoneinfo/${TIMEZONE}" /etc/localtime && \
+    echo "${TIMEZONE}" > /etc/timezone
 
 # Install packages
 RUN dnf install -y \
