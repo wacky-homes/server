@@ -85,13 +85,13 @@ spec:
             volumes:
                 - name: immich-db
                   hostPath:
-                      path: /var/data/immich/db
-                      type: DirectoryOrCreate
+                      path: /var/data/local/immich/db
+                      type: Directory
                 - name: immich-library
                   hostPath:
-                      path: /var/data/immich/library
-                      type: DirectoryOrCreate
+                      path: /var/data/external/immich/library
+                      type: Directory
                 - name: immich-machine-learning
                   hostPath:
-                      path: /var/data/immich/machine-learning
-                      type: DirectoryOrCreate
+                      path: /var/data/external/immich/machine-learning
+                      type: Directory

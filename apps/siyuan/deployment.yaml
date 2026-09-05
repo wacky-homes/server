@@ -41,5 +41,5 @@ spec:
             volumes:
                 - name: siyuan
                   hostPath:
-                      path: /var/data/siyuan
-                      type: DirectoryOrCreate
+                      path: /var/data/local/siyuan
+                      type: Directory

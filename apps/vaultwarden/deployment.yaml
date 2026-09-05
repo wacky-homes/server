@@ -27,5 +27,5 @@ spec:
             volumes:
                 - name: data
                   hostPath:
-                      path: /var/data/vaultwarden
-                      type: DirectoryOrCreate
+                      path: /var/data/local/vaultwarden
+                      type: Directory

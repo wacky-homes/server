@@ -31,5 +31,5 @@ spec:
             volumes:
                 - name: data
                   hostPath:
-                      path: /var/data/actual
-                      type: DirectoryOrCreate
+                      path: /var/data/local/actual
+                      type: Directory
