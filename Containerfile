@@ -70,10 +70,10 @@ RUN firewall-offline-cmd --add-service=ssh && \
     firewall-offline-cmd --zone=trusted --add-source=10.43.0.0/16
 
 # Copy systemd units
-COPY system/etc/systemd/system/var-data.mount /etc/systemd/system/var-data.mount
+COPY system/etc/systemd/system/var-data-external.mount /etc/systemd/system/var-data-external.mount
 
 # Enable systemd units
-RUN systemctl enable var-data.mount && \
+RUN systemctl enable var-data-external.mount && \
     systemctl enable flux-sops-age.service && \
     systemctl enable k3s.service && \
     systemctl enable sshd.service && \
