@@ -7,11 +7,15 @@ fi
 
 mkdir -p .output
 
-read -p "Is ./installer/config.toml updated? [Ny]: " yn
+read -p "Is ./installer/vars.env updated? [Ny]: " yn
 case $yn in
     [Yy]* ) break;;
     * ) exit;;
 esac
+
+set -a; source installer/vars.env; set +a
+envsubst '${NODE_NAME} ${TIMEZONE} ${USERNAME} ${PASSWORD_HASH} ${AGE_KEY} ${ROOT_MINSIZE}' \
+    < installer/config.toml.template > "installer/config.toml"
 
 podman build -t localhost/wacky-homes-installer:latest -f ./installer/Containerfile .
 
