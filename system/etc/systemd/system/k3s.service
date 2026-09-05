@@ -2,7 +2,6 @@
 Description=K3s Kubernetes
 Wants=network-online.target
 After=network-online.target firewalld.service
-RequiresMountsFor=/var/data
 
 [Service]
 Type=notify
