@@ -54,7 +54,7 @@ COPY system/etc/systemd/system/k3s.service /etc/systemd/system/k3s.service
 COPY system/etc/rancher/k3s/config.yaml /etc/rancher/k3s/config.yaml
 
 # Copy system configurations
-COPY system/usr/share/containers/cosign.pub /usr/share/containers/cosign.pub
+COPY system/usr/share/containers/skopeo.pub /usr/share/containers/skopeo.pub
 COPY system/etc/containers/policy.json /etc/containers/policy.json
 COPY system/etc/containers/registries.d/ghcr.io.yaml /etc/containers/registries.d/ghcr.io.yaml
 

@@ -2,4 +2,4 @@
 .output
 apps/*/secret.yaml
 age.agekey
-cosign.key
+skopeo.private

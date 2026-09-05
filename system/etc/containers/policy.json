@@ -9,7 +9,7 @@
             "ghcr.io/wacky-homes/server": [
                 {
                     "type": "sigstoreSigned",
-                    "keyPath": "/usr/share/containers/cosign.pub",
+                    "keyPath": "/usr/share/containers/skopeo.pub",
                     "signedIdentity": {
                         "type": "matchRepository"
                     }
