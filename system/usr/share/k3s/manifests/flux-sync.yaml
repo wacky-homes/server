@@ -1,4 +1,13 @@
 ---
+apiVersion: v1
+kind: Secret
+metadata:
+    name: flux-gpg-public-keys
+    namespace: flux-system
+type: Opaque
+data:
+    wacky.asc: LS0tLS1CRUdJTiBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCgptRE1FYXBpRzZ4WUpLd1lCQkFIYVJ3OEJBUWRBdnJ0NDI3SXUzczd2VTcyT1MrdDVDLzJUbVJIOVl6ZFk0Z1VZClFZMWs3cXUwTG1kbGNtZHZjM3BoYzNwMllYSmhaR2tnUEhONllYTjZkbUZ5WVdScExtZGxjbWR2UUhsaGFHOXYKTG1OdmJUNklrd1FURmdvQU94WWhCRGt3MnNnNUo4WW4xSmRaS3cxL0FmZlJWL2QxQlFKcW1JYnJBaHNEQlFzSgpDQWNDQWlJQ0JoVUtDUWdMQWdRV0FnTUJBaDRIQWhlQUFBb0pFQTEvQWZmUlYvZDF5cG9CQU9OM1Q3ak1ic1ZrClk2TjIvY3RrcUo1M3hMOWFXcVVDWklhMnBoV3RSODRSQVFDdjZpM0Y2WlpCSWZWNmJGZitKblVkdVZ4R05OMW4KR2N1MlhQdFBDVjN0Q1E9PQo9U2NhVQotLS0tLUVORCBQR1AgUFVCTElDIEtFWSBCTE9DSy0tLS0tCg==
+---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
@@ -9,6 +18,10 @@ spec:
     url: https://github.com/wacky-homes/server.git
     ref:
         branch: main
+    verify:
+        mode: HEAD
+        secretRef:
+            name: flux-gpg-public-keys
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
