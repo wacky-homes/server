@@ -21,6 +21,7 @@ RUN dnf install -y \
         htop \
         jq \
         yq \
+        tree \
     && dnf clean all && rm -rf /var/cache /var/log/dnf
 
 # Install k3s dependencies
