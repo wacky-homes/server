@@ -1,0 +1,20 @@
+{
+    "default": [
+        {
+            "type": "insecureAcceptAnything"
+        }
+    ],
+    "transports": {
+        "docker": {
+            "ghcr.io/wacky-homes/server": [
+                {
+                    "type": "sigstoreSigned",
+                    "keyPath": "/usr/share/containers/cosign.pub",
+                    "signedIdentity": {
+                        "type": "matchRepository"
+                    }
+                }
+            ]
+        }
+    }
+}

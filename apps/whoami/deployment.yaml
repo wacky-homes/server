@@ -21,6 +21,3 @@ spec:
                   ports:
                       - name: http
                         containerPort: 80
-                  envFrom:
-                      - secretRef:
-                            name: whoami

@@ -1,17 +1,17 @@
 FROM quay.io/fedora/fedora-bootc:44
 
-ARG HOSTNAME=wacky
-ARG TIMEZONE=UTC
+ARG NODE_NAME=wacky
+ARG NODE_TIMEZONE=UTC
 ARG K3S_VERSION=1.36.4+k3s1
 
 # Set hostname
-RUN echo "${HOSTNAME}"            > /etc/hostname && \
-	echo "127.0.0.1	${HOSTNAME}" >> /etc/hosts && \
-	echo "::1		${HOSTNAME}" >> /etc/hosts
+RUN echo "${NODE_NAME}"            > /etc/hostname && \
+	echo "127.0.0.1	${NODE_NAME}" >> /etc/hosts && \
+	echo "::1		${NODE_NAME}" >> /etc/hosts
 
 # Set timezone
-RUN ln -snf "/usr/share/zoneinfo/${TIMEZONE}" /etc/localtime && \
-    echo "${TIMEZONE}" > /etc/timezone
+RUN ln -snf "/usr/share/zoneinfo/${NODE_TIMEZONE}" /etc/localtime && \
+    echo "${NODE_TIMEZONE}" > /etc/timezone
 
 # Install packages
 RUN dnf install -y \
@@ -52,6 +52,11 @@ COPY system/usr/share/k3s/manifests/flux-sync.yaml /usr/share/k3s/manifests/flux
 COPY system/etc/systemd/system/flux-sops-age.service /etc/systemd/system/flux-sops-age.service
 COPY system/etc/systemd/system/k3s.service /etc/systemd/system/k3s.service
 COPY system/etc/rancher/k3s/config.yaml /etc/rancher/k3s/config.yaml
+
+# Copy system configurations
+COPY system/usr/share/containers/cosign.pub /usr/share/containers/cosign.pub
+COPY system/etc/containers/policy.json /etc/containers/policy.json
+COPY system/etc/containers/registries.d/ghcr.io.yaml /etc/containers/registries.d/ghcr.io.yaml
 
 # Setup SSH
 RUN printf '%s\n' \
