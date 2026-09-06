@@ -17,7 +17,7 @@ spec:
             enableServiceLinks: false
             containers:
                 - name: cloudflared
-                  image: cloudflare/cloudflared:latest
+                  image: docker.io/cloudflare/cloudflared:latest@sha256:51c9cefcb4569df44e1ad403ab1d3d8065aa8e84339bcfc6aee75502e1140339
                   args:
                       - tunnel
                       - --no-autoupdate

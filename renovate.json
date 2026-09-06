@@ -1,0 +1,67 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "config:recommended",
+        ":dependencyDashboard"
+    ],
+    "timezone": "UTC",
+    "schedule": [
+        "before 6am on monday"
+    ],
+    "prConcurrentLimit": 5,
+    "packageRules": [
+        {
+            "description": "Pin every container image to a digest. Tags stay in the ref for readability; the digest is what actually gets pulled.",
+            "matchDatasources": [
+                "docker"
+            ],
+            "pinDigests": true
+        },
+        {
+            "description": "The bootc base is deliberately unpinned. Fedora ships security updates into the :44 tag and the weekly rebuild is how this node gets them; a digest pin would freeze the OS until Renovate opened a PR.",
+            "matchPackageNames": [
+                "quay.io/fedora/fedora-bootc"
+            ],
+            "enabled": false
+        },
+        {
+            "description": "Group immich-server with immich-machine-learning. They share a version and will not talk to each other across a mismatch.",
+            "matchPackageNames": [
+                "ghcr.io/immich-app/immich-server",
+                "ghcr.io/immich-app/immich-machine-learning"
+            ],
+            "groupName": "immich"
+        },
+        {
+            "description": "Home Assistant ships breaking changes in minor releases roughly monthly. Keep them separate so one bad release does not block the rest.",
+            "matchPackageNames": [
+                "ghcr.io/home-assistant/home-assistant"
+            ],
+            "groupName": "home-assistant"
+        }
+    ],
+    "customManagers": [
+        {
+            "description": "k3s is fetched by ARG in the Containerfile, not as an image.",
+            "customType": "regex",
+            "managerFilePatterns": [
+                "/(^|/)Containerfile$/"
+            ],
+            "matchStrings": [
+                "ARG K3S_VERSION=(?<currentValue>.+?)\\s"
+            ],
+            "depNameTemplate": "k3s-io/k3s",
+            "datasourceTemplate": "github-releases",
+            "extractVersionTemplate": "^v(?<version>.+)$"
+        }
+    ],
+    "kubernetes": {
+        "managerFilePatterns": [
+            "/^namespaces/.+\\.yaml$/"
+        ]
+    },
+    "ignorePaths": [
+        "system/usr/share/k3s/manifests/flux.yaml",
+        "installer/Containerfile"
+    ]
+}

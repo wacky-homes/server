@@ -20,7 +20,7 @@ spec:
             serviceAccountName: alloy
             containers:
                 - name: alloy
-                  image: grafana/alloy:v1.12.1
+                  image: docker.io/grafana/alloy:v1.12.1@sha256:c311595156fca7b1131683d383dae1acfd29e8879d347161d2a6f714ebac0c0b
                   args:
                       - "run"
                       - "/etc/alloy/config.alloy"
