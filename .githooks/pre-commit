@@ -14,4 +14,4 @@ if ! ./scripts/encrypt-secrets.sh; then
 fi
 
 # Stage anything it rewrote.
-git add $(git diff --name-only -- '*/secret.enc.yaml')
+git add namespaces/**/secret.enc.yaml
