@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+    name: vaultwarden
+
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: vaultwarden
+    template:
+        metadata:
+            labels:
+                app: vaultwarden
+        spec:
+            containers:
+                - name: vaultwarden
+                  image: vaultwarden/server:latest
+                  ports:
+                      - name: http
+                        containerPort: 80
+                  volumeMounts:
+                      - name: data
+                        mountPath: /data
+            volumes:
+                - name: data
+                  hostPath:
+                      path: /var/data/local/vaultwarden
+                      type: Directory

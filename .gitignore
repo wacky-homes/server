@@ -1,6 +1,6 @@
 .bin
 .output
 installer/config.toml
-apps/*/secret.yaml
+namespaces/**/secret.yaml
 age.agekey
 skopeo.private
