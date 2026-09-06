@@ -28,6 +28,12 @@ spec:
                   ports:
                       - name: http
                         containerPort: 9090
+                  resources:
+                      requests:
+                          cpu: 100m
+                          memory: 512Mi
+                      limits:
+                          memory: 2Gi
                   volumeMounts:
                       - name: prometheus
                         mountPath: /prometheus

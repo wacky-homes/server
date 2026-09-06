@@ -1,4 +1,4 @@
-FROM ghcr.io/wacky-homes/server:latest
+FROM ghcr.io/wacky-homes/server:stable
 
 RUN dnf install -y \
      anaconda \

@@ -31,6 +31,12 @@ spec:
                   volumeMounts:
                       - name: immich-db
                         mountPath: /var/lib/postgresql/data
+                  resources:
+                      requests:
+                          cpu: 100m
+                          memory: 256Mi
+                      limits:
+                          memory: 1Gi
                   startupProbe:
                       exec:
                           command:
@@ -40,6 +46,12 @@ spec:
 
                 - name: immich-redis
                   image: docker.io/valkey/valkey:8-bookworm
+                  resources:
+                      requests:
+                          cpu: 50m
+                          memory: 64Mi
+                      limits:
+                          memory: 256Mi
                   startupProbe:
                       exec:
                           command: ["valkey-cli", "ping"]
@@ -70,6 +82,12 @@ spec:
                   ports:
                       - name: http
                         containerPort: 2283
+                  resources:
+                      requests:
+                          cpu: 200m
+                          memory: 512Mi
+                      limits:
+                          memory: 2Gi
                   volumeMounts:
                       - name: immich-library
                         mountPath: /data
@@ -81,6 +99,12 @@ spec:
                         value: /data/immich/library
                       - name: DB_DATA_LOCATION
                         value: /data/immich/db
+                  resources:
+                      requests:
+                          cpu: 200m
+                          memory: 1Gi
+                      limits:
+                          memory: 4Gi
                   volumeMounts:
                       - name: immich-machine-learning
                         mountPath: /cache

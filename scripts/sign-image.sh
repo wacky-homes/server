@@ -79,7 +79,7 @@ if ! gh auth status | grep -q 'write:packages'; then
     gh auth login -s write:packages
 fi
 
-gh auth token | skopeo login ghcr.io -u $(git config user.name) --password-stdin
+gh auth token | skopeo login ghcr.io -u $(gh api user --jq .login) --password-stdin
 
 echo '==> signing image'
 skopeo copy \

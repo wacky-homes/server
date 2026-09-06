@@ -44,8 +44,8 @@ RUN curl -fL "https://github.com/k3s-io/k3s/releases/download/v${K3S_VERSION}/k3
 # Copy k3s configurations
 COPY system/usr/share/k3s/manifests/flux.yaml /usr/share/k3s/manifests/flux.yaml
 COPY system/usr/share/k3s/manifests/flux-sync.yaml /usr/share/k3s/manifests/flux-sync.yaml
-COPY system/etc/systemd/system/flux-sops-age.service /etc/systemd/system/flux-sops-age.service
-COPY system/etc/systemd/system/k3s.service /etc/systemd/system/k3s.service
+COPY system/usr/lib/systemd/system/flux-sops-age.service /usr/lib/systemd/system/flux-sops-age.service
+COPY system/usr/lib/systemd/system/k3s.service /usr/lib/systemd/system/k3s.service
 COPY system/etc/rancher/k3s/config.yaml /etc/rancher/k3s/config.yaml
 
 # Copy system configurations
@@ -55,6 +55,7 @@ COPY system/etc/containers/registries.d/ghcr.io.yaml /etc/containers/registries.
 COPY system/usr/lib/bootc/kargs.d/usb-storage.toml /usr/lib/bootc/kargs.d/usb-storage.toml
 COPY system/usr/lib/udev/rules.d/99-usb-storage.rules /usr/lib/udev/rules.d/99-usb-storage.rules
 COPY system/usr/lib/systemd/system.conf.d/device-timeout.conf /usr/lib/systemd/system.conf.d/device-timeout.conf
+COPY system/usr/lib/tmpfiles.d/appdata.conf /usr/lib/tmpfiles.d/appdata.conf
 
 # Setup SSH
 RUN printf '%s\n' \
@@ -70,14 +71,16 @@ RUN firewall-offline-cmd --add-service=ssh && \
     firewall-offline-cmd --zone=trusted --add-source=10.43.0.0/16
 
 # Copy systemd units
-COPY system/etc/systemd/system/var-data-external.mount /etc/systemd/system/var-data-external.mount
+COPY system/usr/lib/systemd/system/var-data-external.mount /usr/lib/systemd/system/var-data-external.mount
 
 # Enable systemd units
 RUN systemctl enable var-data-external.mount && \
     systemctl enable flux-sops-age.service && \
     systemctl enable k3s.service && \
     systemctl enable sshd.service && \
-    systemctl enable firewalld.service
+    systemctl enable firewalld.service && \
+    systemctl enable bootc-fetch-apply-updates.timer
+
 
 # Validate the container
 RUN bootc container lint

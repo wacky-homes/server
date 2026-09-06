@@ -30,7 +30,7 @@ podman run \
     quay.io/centos-bootc/bootc-image-builder:latest \
     --type bootc-installer \
     --rootfs xfs \
-    --installer-payload-ref ghcr.io/wacky-homes/server:latest \
+    --installer-payload-ref ghcr.io/wacky-homes/server:stable \
     localhost/wacky-homes-installer:latest
 
 echo ""

@@ -134,6 +134,51 @@ groups:
                                 type: gt
                                 params: [0]
 
+          - uid: container-memory-near-limit
+            title: Container approaching its memory limit
+            condition: C
+            for: 15m
+            # Series vanish while a pod is being replaced (every app here uses
+            # strategy: Recreate), so NoData is the healthy case.
+            noDataState: OK
+            execErrState: Error
+            annotations:
+                summary: "{{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) has been over 90% of its memory limit for 15m"
+            labels:
+                severity: warning
+            data:
+                - refId: A
+                  relativeTimeRange:
+                      from: 900
+                      to: 0
+                  datasourceUid: prometheus
+                  model:
+                      refId: A
+                      instant: true
+                      editorMode: code
+                      # working_set, not usage: it excludes reclaimable page
+                      # cache and is the number the kernel OOM killer acts on.
+                      #
+                      # The `> 0` on the denominator is a filter, not a
+                      # comparison — it drops containers with no limit set
+                      # (traefik, coredns, the flux controllers), which would
+                      # otherwise divide by zero and alert forever.
+                      expr: >
+                          max by (namespace, pod, container) (
+                              container_memory_working_set_bytes{container!="", container!="POD"}
+                            / (container_spec_memory_limit_bytes{container!="", container!="POD"} > 0)
+                          ) * 100
+                - refId: C
+                  datasourceUid: __expr__
+                  model:
+                      refId: C
+                      type: threshold
+                      expression: A
+                      conditions:
+                          - evaluator:
+                                type: gt
+                                params: [90]
+
           - uid: node-memory-pressure
             title: Node memory pressure
             condition: C

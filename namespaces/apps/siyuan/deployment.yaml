@@ -6,6 +6,8 @@ metadata:
 
 spec:
     replicas: 1
+    strategy:
+        type: Recreate
     selector:
         matchLabels:
             app: siyuan
@@ -34,6 +36,12 @@ spec:
                   ports:
                       - name: http
                         containerPort: 6806
+                  resources:
+                      requests:
+                          cpu: 100m
+                          memory: 256Mi
+                      limits:
+                          memory: 1Gi
                   volumeMounts:
                       - name: siyuan
                         mountPath: /data

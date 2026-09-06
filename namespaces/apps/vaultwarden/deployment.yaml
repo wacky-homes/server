@@ -6,6 +6,8 @@ metadata:
 
 spec:
     replicas: 1
+    strategy:
+        type: Recreate
     selector:
         matchLabels:
             app: vaultwarden
@@ -14,12 +16,19 @@ spec:
             labels:
                 app: vaultwarden
         spec:
+            enableServiceLinks: false
             containers:
                 - name: vaultwarden
                   image: vaultwarden/server:latest
                   ports:
                       - name: http
                         containerPort: 80
+                  resources:
+                      requests:
+                          cpu: 50m
+                          memory: 128Mi
+                      limits:
+                          memory: 512Mi
                   volumeMounts:
                       - name: data
                         mountPath: /data
