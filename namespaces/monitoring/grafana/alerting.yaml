@@ -101,25 +101,27 @@ groups:
             title: Flux reconciliation failing
             condition: C
             for: 15m
+            # No matching log lines means no series at all, so NoData is the
+            # healthy case here. Anything else alerts permanently.
             noDataState: OK
             execErrState: Error
             annotations:
-                summary: "{{ $labels.kind }}/{{ $labels.name }} has not been ready for 15m"
+                summary: "{{ $labels.app }} has been logging errors for 15m"
             labels:
                 severity: warning
             data:
                 - refId: A
                   relativeTimeRange:
-                      from: 300
+                      from: 600
                       to: 0
-                  datasourceUid: prometheus
+                  datasourceUid: loki
                   model:
                       refId: A
-                      instant: true
+                      queryType: instant
                       editorMode: code
                       expr: >
-                          max by (kind, name, namespace) (
-                              gotk_reconcile_condition{type="Ready", status="False"}
+                          sum by (app) (
+                              count_over_time({namespace="flux-system"} |= `"level":"error"` [10m])
                           )
                 - refId: C
                   datasourceUid: __expr__
