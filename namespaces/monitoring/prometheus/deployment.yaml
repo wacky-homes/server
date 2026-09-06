@@ -20,9 +20,6 @@ spec:
                   image: prom/prometheus:latest
                   args:
                       - "--config.file=/etc/prometheus/prometheus.yml"
-                  envFrom:
-                      - secretRef:
-                            name: prometheus
                   volumeMounts:
                       - name: prometheus
                         mountPath: /prometheus
