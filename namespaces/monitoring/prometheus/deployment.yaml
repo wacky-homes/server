@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+    name: prometheus
+
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: prometheus
+    template:
+        metadata:
+            labels:
+                app: prometheus
+        spec:
+            enableServiceLinks: false
+            containers:
+                - name: prometheus
+                  image: prom/prometheus:latest
+                  args:
+                      - "--config.file=/etc/prometheus/prometheus.yml"
+                  envFrom:
+                      - secretRef:
+                            name: prometheus
+                  volumeMounts:
+                      - name: prometheus
+                        mountPath: /prometheus
+                      - name: prometheus-config
+                        mountPath: /etc/prometheus/prometheus.yml
+                        subPath: configuration.yaml
+                        readOnly: true
+            volumes:
+                - name: prometheus
+                  hostPath:
+                      path: /var/data/local/prometheus
+                      type: DirectoryOrCreate
+                - name: prometheus-config
+                  configMap:
+                      name: prometheus-config
