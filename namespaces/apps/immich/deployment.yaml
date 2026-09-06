@@ -61,6 +61,9 @@ spec:
                         value: postgres
                       - name: REDIS_HOSTNAME
                         value: localhost
+                      - name: IMMICH_MACHINE_LEARNING_URL
+                        value: http://localhost:3003
+
                   envFrom:
                       - secretRef:
                             name: immich
