@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+    name: grafana
+
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: grafana
+    template:
+        metadata:
+            labels:
+                app: grafana
+        spec:
+            enableServiceLinks: false
+            containers:
+                - name: grafana
+                  image: grafana/grafana:latest
+                  ports:
+                      - name: http
+                        containerPort: 3000
+                  env:
+                      - name: GF_SECURITY_ADMIN_USER
+                        value: wacky
+                  envFrom:
+                      - secretRef:
+                            name: grafana
+                  volumeMounts:
+                      - name: grafana
+                        mountPath: /data
+            volumes:
+                - name: grafana
+                  hostPath:
+                      path: /var/data/local/grafana
+                      type: DirectoryOrCreate

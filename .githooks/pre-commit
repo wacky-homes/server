@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Refuse to commit plaintext secrets to a public repository.
+if git diff --cached --name-only --diff-filter=ACM | grep -qE '(^|/)secret\.yaml$'; then
+    printf '\033[31mrefusing to commit:\033[0m plaintext secret.yaml is staged\n' >&2
+    exit 1
+fi
+
+# Keep encrypted copies current.
+if ! ./scripts/encrypt-secrets.sh; then
+    echo 'encrypt-secrets.sh failed' >&2
+    exit 1
+fi
+
+# Stage anything it rewrote.
+git add $(git diff --name-only -- '*/secret.enc.yaml')
