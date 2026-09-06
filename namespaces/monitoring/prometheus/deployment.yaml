@@ -6,6 +6,8 @@ metadata:
 
 spec:
     replicas: 1
+    strategy:
+        type: Recreate
     selector:
         matchLabels:
             app: prometheus
@@ -15,11 +17,17 @@ spec:
                 app: prometheus
         spec:
             enableServiceLinks: false
+            serviceAccountName: prometheus
             containers:
                 - name: prometheus
                   image: prom/prometheus:latest
                   args:
                       - "--config.file=/etc/prometheus/prometheus.yml"
+                      - "--storage.tsdb.path=/prometheus"
+                      - "--storage.tsdb.retention.time=30d"
+                  ports:
+                      - name: http
+                        containerPort: 9090
                   volumeMounts:
                       - name: prometheus
                         mountPath: /prometheus
