@@ -1,0 +1,199 @@
+apiVersion: 1
+
+# Where alerts go. The URL comes from the `grafana` Secret so it stays out of
+# the public repo — Grafana expands $VARS in provisioning files at load time.
+contactPoints:
+    - orgId: 1
+      name: discord
+      receivers:
+          - uid: discord-default
+            type: discord
+            settings:
+                url: $ALERT_WEBHOOK_URL
+
+policies:
+    - orgId: 1
+      receiver: discord
+      group_by:
+          - alertname
+          - namespace
+          - pod
+      group_wait: 30s
+      group_interval: 5m
+      # Homelab: don't re-nag every 4h (the default).
+      repeat_interval: 12h
+
+groups:
+    - orgId: 1
+      name: cluster
+      folder: Alerts
+      interval: 1m
+      rules:
+          - uid: pod-crash-looping
+            title: Pod is crash looping
+            condition: C
+            for: 10m
+            noDataState: OK
+            execErrState: Error
+            annotations:
+                summary: "{{ $labels.namespace }}/{{ $labels.pod }} keeps restarting"
+            labels:
+                severity: warning
+            data:
+                - refId: A
+                  relativeTimeRange:
+                      from: 900
+                      to: 0
+                  datasourceUid: prometheus
+                  model:
+                      refId: A
+                      instant: true
+                      editorMode: code
+                      expr: >
+                          sum by (namespace, pod) (
+                              changes(container_start_time_seconds{container!="", container!="POD"}[15m])
+                          )
+                - refId: C
+                  datasourceUid: __expr__
+                  model:
+                      refId: C
+                      type: threshold
+                      expression: A
+                      conditions:
+                          - evaluator:
+                                type: gt
+                                params: [3]
+
+          - uid: scrape-target-down
+            title: Prometheus target is down
+            condition: C
+            for: 10m
+            # A target that vanishes entirely is itself worth knowing about.
+            noDataState: Alerting
+            execErrState: Error
+            annotations:
+                summary: "job {{ $labels.job }} has an unreachable target"
+            labels:
+                severity: warning
+            data:
+                - refId: A
+                  relativeTimeRange:
+                      from: 300
+                      to: 0
+                  datasourceUid: prometheus
+                  model:
+                      refId: A
+                      instant: true
+                      editorMode: code
+                      expr: min by (job) (up)
+                - refId: C
+                  datasourceUid: __expr__
+                  model:
+                      refId: C
+                      type: threshold
+                      expression: A
+                      conditions:
+                          - evaluator:
+                                type: lt
+                                params: [1]
+
+          - uid: flux-reconciliation-failing
+            title: Flux reconciliation failing
+            condition: C
+            for: 15m
+            noDataState: OK
+            execErrState: Error
+            annotations:
+                summary: "{{ $labels.kind }}/{{ $labels.name }} has not been ready for 15m"
+            labels:
+                severity: warning
+            data:
+                - refId: A
+                  relativeTimeRange:
+                      from: 300
+                      to: 0
+                  datasourceUid: prometheus
+                  model:
+                      refId: A
+                      instant: true
+                      editorMode: code
+                      expr: >
+                          max by (kind, name, namespace) (
+                              gotk_reconcile_condition{type="Ready", status="False"}
+                          )
+                - refId: C
+                  datasourceUid: __expr__
+                  model:
+                      refId: C
+                      type: threshold
+                      expression: A
+                      conditions:
+                          - evaluator:
+                                type: gt
+                                params: [0]
+
+          - uid: node-memory-pressure
+            title: Node memory pressure
+            condition: C
+            for: 15m
+            noDataState: OK
+            execErrState: Error
+            annotations:
+                summary: "pods are using over 90% of physical memory"
+            labels:
+                severity: warning
+            data:
+                - refId: A
+                  relativeTimeRange:
+                      from: 300
+                      to: 0
+                  datasourceUid: prometheus
+                  model:
+                      refId: A
+                      instant: true
+                      editorMode: code
+                      expr: >
+                          sum(container_memory_working_set_bytes{container!=""})
+                              / sum(machine_memory_bytes) * 100
+                - refId: C
+                  datasourceUid: __expr__
+                  model:
+                      refId: C
+                      type: threshold
+                      expression: A
+                      conditions:
+                          - evaluator:
+                                type: gt
+                                params: [90]
+
+          - uid: log-ingestion-stopped
+            title: Log ingestion stopped
+            condition: C
+            for: 15m
+            noDataState: Alerting
+            execErrState: Error
+            annotations:
+                summary: "Loki has received no log lines for 15m — Alloy may be down"
+            labels:
+                severity: warning
+            data:
+                - refId: A
+                  relativeTimeRange:
+                      from: 900
+                      to: 0
+                  datasourceUid: prometheus
+                  model:
+                      refId: A
+                      instant: true
+                      editorMode: code
+                      expr: sum(rate(loki_distributor_lines_received_total[15m]))
+                - refId: C
+                  datasourceUid: __expr__
+                  model:
+                      refId: C
+                      type: threshold
+                      expression: A
+                      conditions:
+                          - evaluator:
+                                type: lte
+                                params: [0]

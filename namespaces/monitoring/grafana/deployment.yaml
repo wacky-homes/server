@@ -36,6 +36,10 @@ spec:
                         mountPath: /etc/grafana/provisioning/datasources/datasources.yaml
                         subPath: datasources.yaml
                         readOnly: true
+                      - name: grafana-alerting
+                        mountPath: /etc/grafana/provisioning/alerting/alerting.yaml
+                        subPath: alerting.yaml
+                        readOnly: true
             volumes:
                 - name: grafana
                   hostPath:
@@ -44,3 +48,6 @@ spec:
                 - name: grafana-datasources
                   configMap:
                       name: grafana-datasources
+                - name: grafana-alerting
+                  configMap:
+                      name: grafana-alerting

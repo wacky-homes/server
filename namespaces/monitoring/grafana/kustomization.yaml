@@ -11,3 +11,6 @@ configMapGenerator:
     - name: grafana-datasources
       files:
           - datasources.yaml
+    - name: grafana-alerting
+      files:
+          - alerting.yaml
