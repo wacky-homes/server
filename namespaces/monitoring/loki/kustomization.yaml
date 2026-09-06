@@ -3,11 +3,9 @@ kind: Kustomization
 
 resources:
     - deployment.yaml
-    - ingress.yaml
     - service.yaml
-    - secret.enc.yaml
 
 configMapGenerator:
-    - name: grafana-datasources
+    - name: loki-config
       files:
-          - datasources.yaml
+          - configuration.yaml

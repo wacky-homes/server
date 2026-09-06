@@ -1,0 +1,77 @@
+logging {
+	level  = "warn"
+	format = "logfmt"
+}
+
+// Only discover pods scheduled to this node, so each DaemonSet replica
+// tails its own logs and nothing is shipped twice.
+discovery.kubernetes "pods" {
+	role = "pod"
+
+	selectors {
+		role  = "pod"
+		field = "spec.nodeName=" + sys.env("NODE_NAME")
+	}
+}
+
+discovery.relabel "pod_logs" {
+	targets = discovery.kubernetes.pods.targets
+
+	rule {
+		source_labels = ["__meta_kubernetes_namespace"]
+		target_label  = "namespace"
+	}
+
+	rule {
+		source_labels = ["__meta_kubernetes_pod_name"]
+		target_label  = "pod"
+	}
+
+	rule {
+		source_labels = ["__meta_kubernetes_pod_container_name"]
+		target_label  = "container"
+	}
+
+	rule {
+		source_labels = ["__meta_kubernetes_pod_label_app"]
+		target_label  = "app"
+	}
+
+	// kubelet writes to /var/log/pods/<ns>_<pod>_<uid>/<container>/<n>.log
+	rule {
+		source_labels = ["__meta_kubernetes_pod_uid", "__meta_kubernetes_pod_container_name"]
+		separator     = "/"
+		target_label  = "__path__"
+		replacement   = "/var/log/pods/*$1/*.log"
+	}
+}
+
+local.file_match "pod_logs" {
+	path_targets = discovery.relabel.pod_logs.output
+}
+
+loki.source.file "pod_logs" {
+	targets    = local.file_match.pod_logs.targets
+	forward_to = [loki.process.cri.receiver]
+}
+
+// containerd writes CRI-format lines: "<ts> <stream> <flags> <message>".
+// This stage unwraps them so Loki stores the bare message with the real
+// timestamp, and exposes stdout/stderr as a label.
+loki.process "cri" {
+	stage.cri {}
+
+	stage.labels {
+		values = {
+			stream = "",
+		}
+	}
+
+	forward_to = [loki.write.default.receiver]
+}
+
+loki.write "default" {
+	endpoint {
+		url = "http://loki:3100/loki/api/v1/push"
+	}
+}

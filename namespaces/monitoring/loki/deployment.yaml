@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+    name: loki
+
+spec:
+    replicas: 1
+    strategy:
+        type: Recreate
+    selector:
+        matchLabels:
+            app: loki
+    template:
+        metadata:
+            labels:
+                app: loki
+        spec:
+            enableServiceLinks: false
+            containers:
+                - name: loki
+                  image: grafana/loki:3.5.7
+                  args:
+                      - "-config.file=/etc/loki/loki.yaml"
+                  ports:
+                      - name: http
+                        containerPort: 3100
+                  readinessProbe:
+                      httpGet:
+                          path: /ready
+                          port: http
+                      initialDelaySeconds: 30
+                  volumeMounts:
+                      - name: loki
+                        mountPath: /loki
+                      - name: loki-config
+                        mountPath: /etc/loki/loki.yaml
+                        subPath: configuration.yaml
+                        readOnly: true
+            volumes:
+                - name: loki
+                  hostPath:
+                      path: /var/data/local/loki
+                      type: Directory
+                - name: loki-config
+                  configMap:
+                      name: loki-config
