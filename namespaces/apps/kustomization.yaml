@@ -13,3 +13,4 @@ resources:
     - immich
     - siyuan
     - home-assistant
+    - n8n
