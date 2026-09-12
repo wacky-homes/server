@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+
+metadata:
+    name: immich
+
+spec:
+    podSelector:
+        matchLabels:
+            app: immich
+    policyTypes:
+        - Ingress
+    ingress:
+        # Only the immich-server container is reachable. Postgres and Valkey
+        # share this pod's network namespace and talk over localhost, which
+        # NetworkPolicy does not apply to — so they stay unreachable from
+        # anywhere else without needing a rule.
+        - from:
+              - namespaceSelector:
+                    matchLabels:
+                        kubernetes.io/metadata.name: kube-system
+                podSelector:
+                    matchLabels:
+                        app.kubernetes.io/name: traefik
+          ports:
+              - protocol: TCP
+                port: 2283

@@ -5,4 +5,5 @@ resources:
     - deployment.yaml
     - ingress.yaml
     - service.yaml
+    - networkpolicy.yaml
     - secret.enc.yaml

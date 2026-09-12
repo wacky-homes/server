@@ -4,6 +4,6 @@ kind: Kustomization
 resources:
     - deployment.yaml
     - ingress.yaml
-    - networkpolicy.yaml
     - service.yaml
+    - networkpolicy.yaml
     - secret.enc.yaml
