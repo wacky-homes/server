@@ -18,8 +18,6 @@ spec:
         spec:
             enableServiceLinks: false
             securityContext:
-                # The image runs as the `node` user; fsGroup keeps the
-                # hostPath writable for it.
                 runAsUser: 1000
                 runAsGroup: 1000
                 fsGroup: 1000
@@ -33,22 +31,16 @@ spec:
                         value: n8n.wacky.homes
                       - name: N8N_PROTOCOL
                         value: https
-                      # Must be the externally visible URL, or callbacks
-                      # registered with third parties point at the wrong host.
                       - name: WEBHOOK_URL
                         value: https://n8n.wacky.homes/
                       - name: GENERIC_TIMEZONE
                         value: UTC
                       - name: TZ
                         value: UTC
-                      # Traefik serves plain HTTP inside the cluster, so the
-                      # editor is reached over http:// on the LAN hostname.
-                      # Without this n8n refuses to set its session cookie and
-                      # the UI never finishes loading.
                       - name: N8N_SECURE_COOKIE
                         value: "false"
-                      # cloudflared -> traefik -> pod, so X-Forwarded-For has
-                      # two hops in front of n8n.
+                      - name: N8N_INSECURE_DISABLE_WEBHOOK_IFRAME_SANDBOX
+                        value: "true"
                       - name: N8N_PROXY_HOPS
                         value: "2"
                       - name: N8N_RUNNERS_ENABLED
