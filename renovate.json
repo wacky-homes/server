@@ -25,19 +25,29 @@
             "enabled": false
         },
         {
-            "description": "Group immich-server with immich-machine-learning. They share a version and will not talk to each other across a mismatch.",
+            "description": "Bundle every non-major update into one weekly PR, so each week costs a single merge and a single signed empty commit. digest/pinDigest are listed explicitly because the stock group:allNonMajor preset omits them, which would leave the tag-less images (grafana, prometheus, cloudflared, actual, siyuan) as separate PRs.",
+            "matchPackageNames": [
+                "*"
+            ],
+            "matchUpdateTypes": [
+                "minor",
+                "patch",
+                "digest",
+                "pinDigest"
+            ],
+            "groupName": "all non-major",
+            "groupSlug": "all-non-major"
+        },
+        {
+            "description": "Majors get their own PRs so one breaking release cannot hold the weekly bundle hostage. immich-server and immich-machine-learning still travel together: they share a version and will not talk to each other across a mismatch. Non-major immich updates already land together in the bundle above.",
             "matchPackageNames": [
                 "ghcr.io/immich-app/immich-server",
                 "ghcr.io/immich-app/immich-machine-learning"
             ],
-            "groupName": "immich"
-        },
-        {
-            "description": "Home Assistant ships breaking changes in minor releases roughly monthly. Keep them separate so one bad release does not block the rest.",
-            "matchPackageNames": [
-                "ghcr.io/home-assistant/home-assistant"
+            "matchUpdateTypes": [
+                "major"
             ],
-            "groupName": "home-assistant"
+            "groupName": "immich"
         }
     ],
     "customManagers": [
