@@ -23,7 +23,7 @@ spec:
                 fsGroup: 1000
             containers:
                 - name: n8n
-                  image: docker.io/n8nio/n8n:2.44.0@sha256:92e8d64780d6ed26d14eaa5e7c0b83aa51add651f4d22289558aaafbffce0a07
+                  image: docker.io/n8nio/n8n:2.45.3@sha256:bf88c3783fc4b2a90a007bb99b04ad2f6a9627f41499baf72ca67559c51c7f4c
                   env:
                       - name: N8N_PORT
                         value: "5678"
