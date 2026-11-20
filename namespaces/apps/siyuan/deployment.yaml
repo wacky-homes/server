@@ -19,7 +19,7 @@ spec:
             enableServiceLinks: false
             containers:
                 - name: siyuan
-                  image: docker.io/b3log/siyuan:latest@sha256:b528a08f75936f19ee647c46c55c4d6924bdd93e30941128e468187bcfbc772d
+                  image: docker.io/b3log/siyuan:latest@sha256:4166c882818eea4aafb5e7c42f2e8568184b611d20953eff10e2cb6f08fe9c65
                   args:
                       - serve
                       - --workspace=/data
