@@ -22,7 +22,7 @@ spec:
             enableServiceLinks: false
             containers:
                 - name: loki
-                  image: docker.io/grafana/loki:3.7.8@sha256:1107dd5274e0ada47e42472b7a7e71f3b2a2fe878878108f3e2f9e51528f0193
+                  image: docker.io/grafana/loki:3.7.11@sha256:4c86f2ad5003304c8da84d29da2279b04eb999d716f8089c88e4fa4a44b0781e
                   args:
                       - "-config.file=/etc/loki/loki.yaml"
                   ports:
